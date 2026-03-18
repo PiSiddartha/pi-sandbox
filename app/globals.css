@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+/* Animated blob keyframes (teal / moving blobs — PI repo design language) */
+@keyframes blob1 {
+  0% {
+    transform: scale(1) rotate(0deg) translate(0, 0);
+    top: -10%;
+    left: -10%;
+  }
+  25% {
+    transform: scale(1.1, 0.9) rotate(30deg) translate(40px, 60px);
+    top: 5%;
+    left: 10%;
+  }
+  50% {
+    transform: scale(0.95, 1.05) rotate(-25deg) translate(-30px, 40px);
+    top: 10%;
+    left: 60%;
+  }
+  75% {
+    transform: scale(1.05, 1.1) rotate(15deg) translate(60px, -30px);
+    top: 30%;
+    left: 30%;
+  }
+  100% {
+    transform: scale(1) rotate(0deg) translate(0, 0);
+    top: -10%;
+    left: -10%;
+  }
+}
+@keyframes blob2 {
+  0% {
+    transform: scale(1) rotate(0deg) translate(0, 0);
+    bottom: -10%;
+    right: -10%;
+  }
+  25% {
+    transform: scale(0.9, 1.1) rotate(-18deg) translate(-40px, 30px);
+    bottom: 10%;
+    right: 5%;
+  }
+  50% {
+    transform: scale(1.05, 0.95) rotate(25deg) translate(30px, -40px);
+    bottom: 20%;
+    right: 40%;
+  }
+  75% {
+    transform: scale(1.1, 1.05) rotate(-10deg) translate(-60px, 20px);
+    bottom: 30%;
+    right: 20%;
+  }
+  100% {
+    transform: scale(1) rotate(0deg) translate(0, 0);
+    bottom: -10%;
+    right: -10%;
+  }
+}
+.animate-blob1 {
+  animation: blob1 48s ease-in-out infinite alternate;
+  position: absolute;
+}
+.animate-blob2 {
+  animation: blob2 56s ease-in-out infinite alternate;
+  position: absolute;
+}
+
+:root {
+  --font-sans: var(--font-nunito-sans);
+  --font-arsenal: var(--font-arsenal-sans);
+  --radius: 0.625rem;
+  --background: #ffffff;
+  --foreground: #082832;
+  --card: #ffffff;
+  --card-foreground: #082832;
+  --primary: #60b5ff;
+  --primary-foreground: #082832;
+  --secondary: #a5a5ff;
+  --secondary-foreground: #082832;
+  --muted: #f7f7f7;
+  --muted-foreground: #8e8e8e;
+  --accent: #e5e5ff;
+  --accent-foreground: #082832;
+  --border: #ebebeb;
+  --input: #ebebeb;
+  --ring: #b5b5b5;
+  /* Sidebar: light theme to match PI repo (logo in natural teal, white sidebar) */
+  --sidebar-bg: #ffffff;
+  --sidebar-foreground: #082832;
+  --sidebar-foreground-muted: #166f8a;
+  --sidebar-accent: #e5e5ff;
+  --sidebar-accent-foreground: #082832;
+  --sidebar-primary: #187A98;
+  --sidebar-border: #ebebeb;
+  --bg-sidebar: var(--sidebar-bg);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+}
