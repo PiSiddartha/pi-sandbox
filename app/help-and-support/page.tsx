@@ -5,8 +5,8 @@ export default function HelpAndSupportPage() {
     <SandboxPage
       title="Help & Support"
       description={[
-        "Help & Support is your central place for documentation, FAQs, and support tickets. You can open new tickets, track P1 incidents, and get help from the PayIntelli team.",
-        "In the full Pi Repository this section is connected to the ticketing system and live help resources. In the Sandbox you can learn the layout and flows from the tutorial video.",
+        "Help & Support is your hub for docs, FAQs, and support tickets. Open tickets, track P1 incidents, and reach the PayIntelli team when you need help.",
+        "Quick access to the right docs and a clear path to support keeps things moving when something goes wrong or you want to try something new.",
       ]}
     />
   );

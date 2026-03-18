@@ -5,8 +5,8 @@ export default function DashboardPage() {
     <SandboxPage
       title="Dashboard"
       description={[
-        "The Dashboard gives you a single view of your payment and transaction metrics. You can see real-time KPIs such as total transaction value, number of transactions, approval rate, and average transaction value, with optional trend comparisons.",
-        "In the full Pi Repository, this page is connected to live APIs and shows interactive charts (e.g. transaction trends and today’s activity). Here in the Sandbox you can explore the layout and watch the tutorial video before requesting access to the live product.",
+        "The Dashboard gives you a single view of your payment and transaction metrics. Real-time KPIs—total transaction value, volume, approval rate, and average ticket size—plus trend comparisons so you can see how you're performing at a glance.",
+        "Charts and graphs here make it easier to spot patterns, catch issues early, and share a clear picture with your team. One place to see what's happening across your payments.",
       ]}
     />
   );

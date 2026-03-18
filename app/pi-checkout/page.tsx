@@ -5,8 +5,8 @@ export default function CheckoutPage() {
     <SandboxPage
       title="Checkout Designs"
       description={[
-        "Checkout Designs lets you browse and customize payment page templates. You can apply themes, adjust colors and branding, and preview how the checkout will look on different devices.",
-        "In the full Pi Repository this module is connected to the template gallery and live customization APIs. In the Sandbox you can learn the flow from the tutorial video and then request access when you are ready.",
+        "Checkout Designs lets you browse and customize payment page templates. Apply themes, tweak colors and branding, and preview on desktop and mobile so your checkout matches your brand.",
+        "A consistent, on-brand checkout builds trust and can improve conversion. See how different themes and layouts look before you go live.",
       ]}
     />
   );

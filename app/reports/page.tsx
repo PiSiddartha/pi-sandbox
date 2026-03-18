@@ -5,8 +5,8 @@ export default function ReportsPage() {
     <SandboxPage
       title="Reports"
       description={[
-        "Reports give you access to transaction history, custom reports, and scheduled exports. You can filter by date, status, and other criteria and drill into individual transaction details.",
-        "In the live Pi Repository this section is backed by real reporting APIs and data. Here in the Sandbox you can familiarize yourself with the layout and workflows via the tutorial video before going live.",
+        "Reports give you transaction history, custom reports, and scheduled exports. Filter by date, status, currency, or provider and drill into any transaction when you need the details.",
+        "The right reports and filters save time—find what you need, export for finance or compliance, and share with stakeholders without digging through raw data.",
       ]}
     />
   );

@@ -7,8 +7,8 @@ export default function PiReconPage() {
       productName="Pi Recon"
       productSlug="recon"
       description={[
-        "Pi Recon is an AI-powered reconciliation module that helps you match and resolve transactions across systems. You can upload data, manage reconciliation tables, and track updates in one place.",
-        "In the full Pi Repository this product is connected to live reconciliation APIs and your data. In the Sandbox you can learn the workflows from the tutorial video. Use the Request Access button when you are ready to use Pi Recon.",
+        "Pi Recon is an AI-powered reconciliation module that matches and resolves transactions across systems. Upload data, manage reconciliation tables, and track match rates and exceptions in one place.",
+        "Automated matching and clear exception handling cut down manual recon work and help you close the books faster. The tutorial walks through the workflow.",
       ]}
     />
   );
