@@ -25,8 +25,8 @@ export default function LoginPage() {
       const authToken = localStorage.getItem("authToken");
       const idToken = localStorage.getItem("idToken");
 
-      if (authToken && idToken) {
-        const idPayload = decodeJWT(idToken);
+      if (authToken) {
+        const idPayload = idToken ? decodeJWT(idToken) : null;
         const accessPayload = decodeJWT(authToken);
         const now = Math.floor(Date.now() / 1000);
         const expired =

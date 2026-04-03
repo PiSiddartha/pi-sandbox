@@ -44,12 +44,12 @@ export function SandboxAuthProvider({ children }: { children: React.ReactNode })
       const idToken =
         typeof window !== "undefined" ? localStorage.getItem("idToken") : null;
 
-      if (!authToken || !idToken) {
+      if (!authToken) {
         setIsLoading(false);
         return;
       }
 
-      const idPayload = decodeJWT(idToken);
+      const idPayload = idToken ? decodeJWT(idToken) : null;
       const accessPayload = decodeJWT(authToken);
       const now = Math.floor(Date.now() / 1000);
 
