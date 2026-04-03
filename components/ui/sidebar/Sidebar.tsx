@@ -24,6 +24,9 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import ProductsCard from "@/components/ui/sidebar/ProductsCard";
 import { useSidebar } from "./SidebarContext";
+import { logoutUrl } from "@/lib/sandboxAuth";
+import { isSandboxApiConfigured } from "@/lib/env";
+import { useSandboxAuth } from "@/hooks/useSandboxAuth";
 
 const DOCS_URL = "https://docs.payintelli.com";
 
@@ -58,6 +61,9 @@ export default function Sidebar() {
   const [showToggle, setShowToggle] = useState(false);
   const [togglePosition, setTogglePosition] = useState({ x: 0, y: 0 });
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const { user, signOutLocal } = useSandboxAuth();
+
+  const authConfigured = isSandboxApiConfigured();
 
   useEffect(() => setMounted(true), []);
 
@@ -300,20 +306,29 @@ export default function Sidebar() {
               selected={pathname === "/settings"}
               darkSidebar={false}
             />
-            <a
-              href="#"
-              onClick={(e) => e.preventDefault()}
-              className={cn(
-                "rounded-lg transition-all duration-150 flex items-center gap-3 p-2 w-full text-foreground hover:bg-sidebar-accent",
-                collapsed && "w-10 h-10 justify-center mx-auto"
-              )}
-              title={collapsed ? "Logout" : undefined}
-            >
-              <LogOut size={18} className="shrink-0" />
-              {!collapsed && (
-                <span className="text-sm font-medium">Logout</span>
-              )}
-            </a>
+            {authConfigured && user ? (
+              <>
+                {!collapsed && (
+                  <p className="mb-1 truncate px-2 text-xs text-muted-foreground">
+                    {user.email}
+                  </p>
+                )}
+                <a
+                  href={logoutUrl()}
+                  onClick={() => signOutLocal()}
+                  className={cn(
+                    "rounded-lg transition-all duration-150 flex items-center gap-3 p-2 w-full text-foreground hover:bg-sidebar-accent",
+                    collapsed && "w-10 h-10 justify-center mx-auto"
+                  )}
+                  title={collapsed ? "Log out" : undefined}
+                >
+                  <LogOut size={18} className="shrink-0" />
+                  {!collapsed && (
+                    <span className="text-sm font-medium">Log out</span>
+                  )}
+                </a>
+              </>
+            ) : null}
           </div>
         </div>
       </div>

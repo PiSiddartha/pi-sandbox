@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { postRequestAccess } from "@/lib/sandboxApi";
+import { getAccessToken } from "@/lib/sandboxAuth";
 
 interface RequestAccessFormProps {
   productName: string;
@@ -9,11 +11,7 @@ interface RequestAccessFormProps {
   onClose: () => void;
 }
 
-/**
- * Bare-bones request access form. Submit will be wired to admin console later.
- * Cognitive-based auth for Sandbox can be added later.
- * Rendered via portal so it appears above sidebar and all content.
- */
+/** Submits to pi-sandbox-api POST /request-access (requires Cognito JWT). */
 export function RequestAccessForm({
   productName,
   productSlug,
@@ -24,25 +22,49 @@ export function RequestAccessForm({
   const [reason, setReason] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: POST to admin console / onboarding API
-    console.log("Request Access", {
-      productName,
-      productSlug,
-      name,
-      email,
-      reason,
-    });
-    setSubmitted(true);
-    setTimeout(() => {
-      onClose();
-    }, 1500);
+    setError(null);
+    if (!getAccessToken()) {
+      setError("Please sign in first (use Log in in the sidebar).");
+      return;
+    }
+    setLoading(true);
+    try {
+      const { ok, status, data } = await postRequestAccess({
+        productSlug,
+        productName,
+        name,
+        email,
+        reason,
+      });
+      if (!ok) {
+        const msg =
+          data &&
+          typeof data === "object" &&
+          "message" in data &&
+          typeof (data as { message: unknown }).message === "string"
+            ? (data as { message: string }).message
+            : `Request failed (${status})`;
+        setError(msg);
+        return;
+      }
+      setSubmitted(true);
+      setTimeout(() => {
+        onClose();
+      }, 1500);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Request failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const overlay = (
@@ -71,6 +93,11 @@ export function RequestAccessForm({
           </p>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
+            {error ? (
+              <p className="text-sm text-destructive" role="alert">
+                {error}
+              </p>
+            ) : null}
             <div>
               <label
                 htmlFor="name"
@@ -129,9 +156,10 @@ export function RequestAccessForm({
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90"
+                disabled={loading}
+                className="px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 disabled:opacity-60"
               >
-                Submit Request
+                {loading ? "Submitting…" : "Submit Request"}
               </button>
             </div>
           </form>

@@ -2,8 +2,9 @@ import { Nunito, Arsenal } from "next/font/google";
 import "./globals.css";
 import type { Metadata } from "next";
 import { SidebarProvider } from "@/components/ui/sidebar/SidebarContext";
-import Sidebar from "@/components/ui/sidebar/Sidebar";
 import AnimatedBlobs from "@/components/AnimatedBlobs";
+import { SandboxAuthProvider } from "@/providers/SandboxAuthProvider";
+import { AppChrome } from "@/components/AppChrome";
 
 const nunito = Nunito({
   variable: "--font-nunito-sans",
@@ -18,7 +19,9 @@ const arsenal = Arsenal({
 
 export const metadata: Metadata = {
   title: "Pi Sandbox — PayIntelli",
-  description: "Sandbox environment to learn the Pi platform. Cognitive-based auth can be added later.",
+  description:
+    "Sandbox environment to explore the Pi platform with Client Hub sign-in and product demos.",
+  robots: "noindex, nofollow",
 };
 
 export default function RootLayout({
@@ -33,10 +36,9 @@ export default function RootLayout({
       >
         <AnimatedBlobs />
         <SidebarProvider>
-          <Sidebar />
-          <main className="flex-1 flex flex-col min-h-screen overflow-auto relative z-[1] bg-background/95">
-            {children}
-          </main>
+          <SandboxAuthProvider>
+            <AppChrome>{children}</AppChrome>
+          </SandboxAuthProvider>
         </SidebarProvider>
       </body>
     </html>
