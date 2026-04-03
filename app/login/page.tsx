@@ -48,7 +48,8 @@ export default function LoginPage() {
       setIsChecking(false);
     };
 
-    const t = setTimeout(checkExistingAuth, 100);
+    // Keep the branded loading screen visible for at least 2.5 seconds.
+    const t = setTimeout(checkExistingAuth, 2500);
     return () => clearTimeout(t);
   }, []);
 
@@ -72,8 +73,13 @@ export default function LoginPage() {
     <div className="flex min-h-screen flex-1 flex-col items-center justify-center bg-background px-4">
       <div className="text-center">
         <div className="mx-auto h-12 w-12 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-        <p className="mt-4 text-sm text-muted-foreground">
-          {isChecking ? "Checking authentication…" : "Redirecting to sign in…"}
+        <h1 className="mt-6 text-xl font-semibold text-foreground">
+          Rendering the world of intelligent payments...
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {isChecking
+            ? "Validating your secure session."
+            : "Preparing your sign-in experience."}
         </p>
       </div>
     </div>
