@@ -18,7 +18,8 @@ const arsenal = Arsenal({
 
 export const metadata: Metadata = {
   title: "Pi Sandbox — PayIntelli",
-  description: "Sandbox environment to learn the Pi platform. Cognitive-based auth can be added later.",
+  description:
+    "Sandbox environment to explore the Pi platform with Client Hub sign-in and product demos.",
 };
 
 export default function RootLayout({
