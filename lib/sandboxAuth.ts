@@ -1,15 +1,35 @@
 /**
- * Pi Sandbox — Cognito tokens from OAuth callback (query params → sessionStorage).
- * API calls use Bearer access_token; matches pi-sandbox-api JWT authorizer (client hub).
+ * Pi Sandbox auth — same token storage pattern as pi-admin-dashboard (localStorage).
+ * API: Bearer access token against pi-sandbox-api JWT authorizer (Client Hub).
  */
 
 import { SANDBOX_API_BASE_URL } from "@/lib/env";
+import { SANDBOX_API_ROUTES } from "@/lib/sandboxApiRoutes";
 
-const PREFIX = "pi_sandbox_";
+/** Match pi-admin-dashboard localStorage keys */
+export const STORAGE_ACCESS = "authToken";
+export const STORAGE_ID = "idToken";
+export const STORAGE_REFRESH = "refreshToken";
 
-export const STORAGE_ACCESS = `${PREFIX}access_token`;
-export const STORAGE_ID = `${PREFIX}id_token`;
-export const STORAGE_REFRESH = `${PREFIX}refresh_token`;
+/** JWT payload decode (client-side expiry check only; API validates). */
+export function decodeJWT(token: string): { exp?: number } | null {
+  try {
+    const base64Url = token.split(".")[1];
+    if (!base64Url) return null;
+    const base64 =
+      base64Url.replace(/-/g, "+").replace(/_/g, "/") +
+      "=".repeat((4 - (base64Url.length % 4)) % 4);
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+    return JSON.parse(jsonPayload);
+  } catch {
+    return null;
+  }
+}
 
 export function getSandboxApiBase(): string {
   if (!SANDBOX_API_BASE_URL) {
@@ -22,33 +42,35 @@ export function getSandboxApiBase(): string {
 
 export function getAccessToken(): string | null {
   if (typeof window === "undefined") return null;
-  return sessionStorage.getItem(STORAGE_ACCESS);
+  return localStorage.getItem(STORAGE_ACCESS);
 }
 
 export function persistTokensFromSearchParams(searchParams: URLSearchParams): void {
   const access = searchParams.get("access_token");
   const id = searchParams.get("id_token");
   const refresh = searchParams.get("refresh_token");
-  if (access) sessionStorage.setItem(STORAGE_ACCESS, access);
-  if (id) sessionStorage.setItem(STORAGE_ID, id);
-  if (refresh) sessionStorage.setItem(STORAGE_REFRESH, refresh);
+  if (access) localStorage.setItem(STORAGE_ACCESS, access);
+  if (id) localStorage.setItem(STORAGE_ID, id);
+  if (refresh) localStorage.setItem(STORAGE_REFRESH, refresh);
 }
 
 export function clearSandboxSession(): void {
   if (typeof window === "undefined") return;
-  sessionStorage.removeItem(STORAGE_ACCESS);
-  sessionStorage.removeItem(STORAGE_ID);
-  sessionStorage.removeItem(STORAGE_REFRESH);
+  localStorage.removeItem(STORAGE_ACCESS);
+  localStorage.removeItem(STORAGE_ID);
+  localStorage.removeItem(STORAGE_REFRESH);
 }
 
 export function isSandboxLoggedIn(): boolean {
   return !!getAccessToken();
 }
 
+/** API Gateway → Lambda → Cognito Hosted UI authorize URL */
 export function loginUrl(): string {
-  return `${getSandboxApiBase()}/auth/login`;
+  return `${getSandboxApiBase()}${SANDBOX_API_ROUTES.authLogin}`;
 }
 
+/** API Gateway → Lambda → Cognito logout */
 export function logoutUrl(): string {
-  return `${getSandboxApiBase()}/auth/logout`;
+  return `${getSandboxApiBase()}${SANDBOX_API_ROUTES.authLogout}`;
 }

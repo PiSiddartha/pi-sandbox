@@ -1,4 +1,6 @@
 import { getAccessToken, getSandboxApiBase } from "@/lib/sandboxAuth";
+import { SANDBOX_API_ROUTES } from "@/lib/sandboxApiRoutes";
+import type { SandboxUser } from "@/types/sandboxUser";
 
 async function apiFetch(
   path: string,
@@ -18,6 +20,12 @@ async function apiFetch(
   return fetch(url, { ...rest, headers });
 }
 
+function httpError(res: Response, fallback: string): Error & { status: number } {
+  const err = new Error(fallback) as Error & { status: number };
+  err.status = res.status;
+  return err;
+}
+
 export async function postRequestAccess(body: {
   productSlug: string;
   productName: string;
@@ -25,7 +33,7 @@ export async function postRequestAccess(body: {
   email: string;
   reason: string;
 }): Promise<{ ok: boolean; status: number; data: unknown }> {
-  const res = await apiFetch("/request-access", {
+  const res = await apiFetch(SANDBOX_API_ROUTES.requestAccess, {
     method: "POST",
     body: JSON.stringify(body),
   });
@@ -39,20 +47,21 @@ export async function postRequestAccess(body: {
 }
 
 export async function getVideos(moduleSlug: string): Promise<unknown> {
-  const q = new URLSearchParams({ module_slug: moduleSlug });
-  const res = await apiFetch(`/videos?${q.toString()}`, { method: "GET" });
-  if (!res.ok) throw new Error(`Videos list failed: ${res.status}`);
+  const res = await apiFetch(SANDBOX_API_ROUTES.videosWithQuery(moduleSlug), {
+    method: "GET",
+  });
+  if (!res.ok) throw httpError(res, `Videos list failed: ${res.status}`);
   return res.json();
 }
 
 export async function getVideoById(id: string): Promise<unknown> {
-  const res = await apiFetch(`/videos/${encodeURIComponent(id)}`, { method: "GET" });
-  if (!res.ok) throw new Error(`Video ${id} failed: ${res.status}`);
+  const res = await apiFetch(SANDBOX_API_ROUTES.videoById(id), { method: "GET" });
+  if (!res.ok) throw httpError(res, `Video ${id} failed: ${res.status}`);
   return res.json();
 }
 
-export async function getCurrentUser(): Promise<unknown> {
-  const res = await apiFetch("/auth/current-user", { method: "GET" });
-  if (!res.ok) throw new Error(`current-user failed: ${res.status}`);
-  return res.json();
+export async function getCurrentUser(): Promise<SandboxUser> {
+  const res = await apiFetch(SANDBOX_API_ROUTES.authCurrentUser, { method: "GET" });
+  if (!res.ok) throw httpError(res, `current-user failed: ${res.status}`);
+  return res.json() as Promise<SandboxUser>;
 }

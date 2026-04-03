@@ -11,7 +11,6 @@ import {
   ChartColumnBigIcon,
   Settings,
   LogOut,
-  LogIn,
   LayoutDashboard,
   CreditCardIcon,
   GitBranch,
@@ -25,13 +24,9 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import ProductsCard from "@/components/ui/sidebar/ProductsCard";
 import { useSidebar } from "./SidebarContext";
-import {
-  clearSandboxSession,
-  getAccessToken,
-  loginUrl,
-  logoutUrl,
-} from "@/lib/sandboxAuth";
+import { logoutUrl } from "@/lib/sandboxAuth";
 import { isSandboxApiConfigured } from "@/lib/env";
+import { useSandboxAuth } from "@/hooks/useSandboxAuth";
 
 const DOCS_URL = "https://docs.payintelli.com";
 
@@ -65,23 +60,12 @@ export default function Sidebar() {
   const [mounted, setMounted] = useState(false);
   const [showToggle, setShowToggle] = useState(false);
   const [togglePosition, setTogglePosition] = useState({ x: 0, y: 0 });
-  const [loggedIn, setLoggedIn] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const { user, signOutLocal } = useSandboxAuth();
 
   const authConfigured = isSandboxApiConfigured();
 
   useEffect(() => setMounted(true), []);
-
-  useEffect(() => {
-    if (!mounted) return;
-    setLoggedIn(Boolean(getAccessToken()));
-  }, [mounted, pathname]);
-
-  useEffect(() => {
-    const onStorage = () => setLoggedIn(Boolean(getAccessToken()));
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, []);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -322,38 +306,28 @@ export default function Sidebar() {
               selected={pathname === "/settings"}
               darkSidebar={false}
             />
-            {authConfigured && !loggedIn ? (
-              <a
-                href={loginUrl()}
-                className={cn(
-                  "rounded-lg transition-all duration-150 flex items-center gap-3 p-2 w-full text-foreground hover:bg-sidebar-accent",
-                  collapsed && "w-10 h-10 justify-center mx-auto"
-                )}
-                title={collapsed ? "Log in" : undefined}
-              >
-                <LogIn size={18} className="shrink-0" />
+            {authConfigured && user ? (
+              <>
                 {!collapsed && (
-                  <span className="text-sm font-medium">Log in</span>
+                  <p className="mb-1 truncate px-2 text-xs text-muted-foreground">
+                    {user.email}
+                  </p>
                 )}
-              </a>
-            ) : null}
-            {authConfigured && loggedIn ? (
-              <a
-                href={logoutUrl()}
-                onClick={() => {
-                  clearSandboxSession();
-                }}
-                className={cn(
-                  "rounded-lg transition-all duration-150 flex items-center gap-3 p-2 w-full text-foreground hover:bg-sidebar-accent",
-                  collapsed && "w-10 h-10 justify-center mx-auto"
-                )}
-                title={collapsed ? "Log out" : undefined}
-              >
-                <LogOut size={18} className="shrink-0" />
-                {!collapsed && (
-                  <span className="text-sm font-medium">Log out</span>
-                )}
-              </a>
+                <a
+                  href={logoutUrl()}
+                  onClick={() => signOutLocal()}
+                  className={cn(
+                    "rounded-lg transition-all duration-150 flex items-center gap-3 p-2 w-full text-foreground hover:bg-sidebar-accent",
+                    collapsed && "w-10 h-10 justify-center mx-auto"
+                  )}
+                  title={collapsed ? "Log out" : undefined}
+                >
+                  <LogOut size={18} className="shrink-0" />
+                  {!collapsed && (
+                    <span className="text-sm font-medium">Log out</span>
+                  )}
+                </a>
+              </>
             ) : null}
           </div>
         </div>

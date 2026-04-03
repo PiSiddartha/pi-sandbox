@@ -18,12 +18,20 @@ function ErrorContent() {
           {details}
         </pre>
       ) : null}
-      <Link
-        href="/"
-        className="mt-6 inline-block text-sm font-medium text-primary hover:underline"
-      >
-        Back to home
-      </Link>
+      <div className="mt-6 flex flex-wrap gap-4">
+        <Link
+          href="/login"
+          className="inline-block text-sm font-medium text-primary hover:underline"
+        >
+          Try signing in again
+        </Link>
+        <Link
+          href="/"
+          className="inline-block text-sm text-muted-foreground hover:underline"
+        >
+          Home
+        </Link>
+      </div>
     </div>
   );
 }
